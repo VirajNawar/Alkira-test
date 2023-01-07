@@ -2,28 +2,65 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import Table from 'react-bootstrap/Table'
 import { BiChevronLeft, BiChevronRight } from 'react-icons/bi';
+import SidePanel from './SidePanel';
 
 
 function Tables() {
   const [teams, setTeams] = useState([]);
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [page, setPage] = useState(1)
-
-  const handleRowClick = (team) => {
-    setSelectedTeam(team);
-  };
+  const [selectedTeamId, setSelectedTeamId] = useState(null);  const [selectedGame, setSelectedGame] = useState(null);
+  const [selectedTeamGames, setSelectedTeamGames] = useState([]);
 
   const handPageClick = (selectedPage) => {
     setPage(selectedPage)
   }
-  const fetchData = async () => {
-    const res = await fetch("https://www.balldontlie.io/api/v1/teams")
-    const data = await res.json()
-    setTeams(data.data)
-  }
+
+
+
   useEffect(() => {
-    fetchData()
+    async function fetchTeams() {
+      const response = await fetch('https://www.balldontlie.io/api/v1/teams');
+      const data = await response.json();
+      setTeams(data.data);
+    }
+    fetchTeams();
   }, []);
+
+  useEffect(() => {
+    async function fetchTeamGames() {
+      const response = await fetch(
+        `https://www.balldontlie.io/api/v1/games?seasons[]=2021&team_ids[]=${selectedTeamId}`
+      );
+      const data = await response.json()
+      setSelectedTeamGames(data.data);
+    }
+    if (selectedTeamId) {
+      fetchTeamGames();
+    }
+  }, [selectedTeamId]);
+
+  useEffect(() => {
+    if (selectedTeamId) {
+      setSelectedTeam(teams.find(team => team.id === selectedTeamId));
+    }
+  }, [selectedTeamId, teams]);
+
+
+  useEffect(() => {
+    if (selectedTeamGames.length > 0) {
+      const randomIndex = Math.floor(Math.random() * selectedTeamGames.length);
+      setSelectedGame(selectedTeamGames[randomIndex]);
+    }
+  }, [selectedTeamGames]);
+
+  function handleTeamClick(team) {
+    setSelectedTeam(team);
+  }
+
+  function handleGameClick(game) {
+    setSelectedGame(game);
+  }
 
   return (
     <div className="teams-table">
@@ -39,11 +76,12 @@ function Tables() {
         </thead>
         <tbody>
           {teams.slice(
-            page * 10 - 10, page * 7).map((team) => (
+            page * 10 - 10, page * 10).map((team) => (
               <tr
                 key={team.id}
-                onClick={() => handleRowClick(team)}
-                className={selectedTeam === team ? "selected" : ""}
+                onClick={() => setSelectedTeamId(team.id)}
+                className={team.id === selectedTeamId ? 'selected' : ''}
+                
               >
                 <td>{team.name}</td>
                 <td>{team.city}</td>
@@ -53,18 +91,14 @@ function Tables() {
               </tr>
             ))}
         </tbody>
-        {selectedTeam && (
-          <div className="side-panel">
-            <h1>{selectedTeam.full_name}</h1>
-            <p>Location: {selectedTeam.city}</p>
-            <h2>Games</h2>
-            {/* pick a random game and display its information */}
-            <p>Game: {selectedTeam.games.city}</p>
-            <p>Opponent: {selectedTeam.games.abbreviation}</p>
-            <p>Date: {selectedTeam.games.division}</p>
-          </div>
-        )}
       </Table>
+
+      {selectedTeam && (
+        <SidePanel team={selectedTeam} 
+        games={selectedTeamGames}
+        selectedGame={selectedGame} 
+        />
+      )}
       {
         teams.length > 0 &&
         <div className='pagination'>
@@ -72,15 +106,15 @@ function Tables() {
             <BiChevronLeft />
           </span>
           {
-            [...Array(Math.floor(teams.length /10))].map((_, i) => {
+            [...Array(Math.floor(teams.length / 10))].map((_, i) => {
               return <span
-               key={i} 
-               onClick={()=>handPageClick(i+1)}
-               >
+                key={i}
+                onClick={() => handPageClick(i + 1)}
+              >
                 {
-                i + 1
+                  i + 1
                 }
-                </span>
+              </span>
             })
           }
 
