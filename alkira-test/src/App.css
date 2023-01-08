@@ -34,6 +34,12 @@ Table {
   text-align: center;
   margin: 0 auto;
   width: 100%;
+  
+}
+
+tbody{
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  border-radius: 0 0 5px 5px;
 }
 
 th{
@@ -55,11 +61,18 @@ th:nth-child(5){
 .side-panel {
   width: 300px;
   height: 100%;
-  background-color: #f1f1f1;
+  background-color: #ffffff;
   position: fixed;
   right: 0;
   top: 0;
   padding: 20px;
+  box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+  transition: opacity 300ms ease-in-out;
+  }
+
+  .separated{
+    width: 100%;
+   background-color: rgb(170, 170, 170);
   }
 
   .pagination{
@@ -81,3 +94,72 @@ th:nth-child(5){
   .pagination > span:hover{
     background-color: #042f59;
   }
+
+  .page-selected{
+    background-color: #FFF;
+    color: #042f59;
+    border: 1px solid #042f59;
+  }
+
+  .page-disabled{
+    opacity: 0;
+  }
+
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+  }
+
+ 
+button {
+  appearance: none;
+  background-color: transparent;
+  border: 2px solid #1A1A1A;
+  border-radius: 7px;
+  box-sizing: border-box;
+  color: #3B3B3B;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Roobert,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  font-size: 16px;
+  font-weight: 600;
+  line-height: normal;
+  margin: 0;
+  min-width: 0;
+  outline: none;
+  padding: 8px 12px;
+  text-align: center;
+  text-decoration: none;
+  transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  will-change: transform;
+}
+
+button:disabled {
+  pointer-events: none;
+}
+
+button:hover {
+  color: #fff;
+  background-color: #1A1A1A;
+  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+  transform: translateY(-2px);
+}
+
+button:active {
+  box-shadow: none;
+  transform: translateY(0);
+}
+
+.flex-details{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
